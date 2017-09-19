@@ -100,6 +100,7 @@ public abstract class AbstractSerialThread
         if (inputQueue.Count == 0)
             return null;
 
+        //Debug.Log("dequeue.");
         return inputQueue.Dequeue();
     }
 
@@ -255,7 +256,7 @@ public abstract class AbstractSerialThread
                 }
                 else
                 {
-                    Debug.LogWarning("Queue is full. Dropping message: " + inputMessage);
+                    //Debug.LogWarning("Queue is full. Dropping message: " + inputMessage);
                 }
             }
         }

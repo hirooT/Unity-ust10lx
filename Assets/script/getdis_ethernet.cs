@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using System;
 using SCIP_library;
+using UnityEngine.UI;
 
 public class getdis_ethernet : MonoBehaviour {
 
@@ -19,9 +20,12 @@ public class getdis_ethernet : MonoBehaviour {
     public string ip_address;
     [Tooltip("default:10940")]
     public int port_number;
-
+    [Tooltip("unit mm")]
     public int range = 500; //單位:mm
+    public Text distancevalue;
     public bool showDebugLog = false;
+    
+    int value = 0;
 
     private Thread setuptcp;
     private Thread receivedata;
@@ -45,6 +49,7 @@ public class getdis_ethernet : MonoBehaviour {
             if (showDebugLog) showDebugLog = false;
             else showDebugLog = true;
         }
+        distancevalue.text = "DistanceValue: " + value.ToString() + "cm";
     }
     private void Get_connect_information(string ip, int port)
     {
@@ -99,6 +104,7 @@ public class getdis_ethernet : MonoBehaviour {
                     for (int k = 0; k < distances.Count; k++)
                     {
                         if(showDebugLog) Debug.Log("k: " + k +"  distance: " + distances[k] / 10 + "cm");
+                        value = (int)distances[k] / 10;
 
                         if ((int)distances[k] < range)
                         {

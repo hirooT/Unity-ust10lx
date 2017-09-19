@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * When creating your message listeners you need to implement these two methods:
@@ -10,6 +11,7 @@ using UnityEngine;
 
 public class MessageListenerF : MonoBehaviour {
 
+    public Text sensorvalue;
     public bool showDebugLog = true;
     private bool showOnce = false;
 
@@ -24,12 +26,13 @@ public class MessageListenerF : MonoBehaviour {
     {
         if (!showOnce)
         {
-            Debug.Log("Message arrived: " + msg);
+            Debug.Log("Message arrived!");
             showOnce = true;
         }
         if (showDebugLog)
         {
             Debug.Log(" >>" + msg);
+            sensorvalue.text = "SensorValue: " + msg.ToString();
         }
     }
     void OnConnectionEvent(bool success)
