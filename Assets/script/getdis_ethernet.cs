@@ -49,6 +49,8 @@ public class getdis_ethernet : MonoBehaviour {
             if (showDebugLog) showDebugLog = false;
             else showDebugLog = true;
         }
+        if (value < 500) distancevalue.color = new Vector4(0.1f, 0.3f, 0.5f, 1f);
+        else distancevalue.color = new Vector4(0.1f, 0.1f, 0.1f, 1f);
         distancevalue.text = "DistanceValue: " + value.ToString() + "cm";
     }
     private void Get_connect_information(string ip, int port)
@@ -123,7 +125,7 @@ public class getdis_ethernet : MonoBehaviour {
             }
             catch (System.Exception e)
             {
-                Debug.Log("<color=red>Error!</color>" + e);
+                Debug.Log(e);
             }
             //Debug.Log("<color=yellow>sleep</color>");
             Thread.Sleep(10);

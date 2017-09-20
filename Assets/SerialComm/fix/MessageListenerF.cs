@@ -32,7 +32,22 @@ public class MessageListenerF : MonoBehaviour {
         if (showDebugLog)
         {
             Debug.Log(" >>" + msg);
-            sensorvalue.text = "SensorValue: " + msg.ToString();
+            if(msg == "0")
+            {
+                sensorvalue.color = Color.green;
+                sensorvalue.text = "SensorValue: Open";
+            }
+            else if (msg == "1")
+            {
+                sensorvalue.color = Color.red;
+                sensorvalue.text = "SensorValue: Close";
+            }
+            else
+            {
+                sensorvalue.color = Color.gray;
+                sensorvalue.text = "SensorValue: ####";
+            }
+
         }
     }
     void OnConnectionEvent(bool success)
