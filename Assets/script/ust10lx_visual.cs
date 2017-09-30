@@ -10,24 +10,17 @@ using System;
 using SCIP_library;
 using UnityEngine.UI;
 
-public class getdis_ethernet : MonoBehaviour {
+public class ust10lx_visual : MonoBehaviour {
 
     private int GET_NUM = 1;
-    public static int start_step = 0; //面對sensor左-右 >> 0-1080step
-    [Tooltip("can't smaller than startstep.")]
-    public static int end_step = 10;
-    [Tooltip("default:192.168.0.10")]
-    public string ip_address;
-    [Tooltip("default:10940")]
-    public int port_number;
-    [Tooltip("unit mm")]
-    public int range = 500; //單位:mm
-    public Text distancevalue;
-    public bool showDebugLog = false;
+    public int start_step = 0;
+    public int end_step = 1080;
+    public string ip_address = "192.168.0.10";
+    public int port_number = 10940;
 
-    //public static float dis;
-    public static float value;
-
+    public Transform seneor;
+    public GameObject prefab;
+    private int total_step = 1080;
     private Thread setuptcp;
     private Thread receivedata;
     private bool ipconfig = false;
@@ -35,24 +28,31 @@ public class getdis_ethernet : MonoBehaviour {
     TcpClient urg;
     NetworkStream stream;
 
-    // Use this for initialization
-    void Start() {
+    private int distance_pool;
+    public GameObject[] pos;
+    Vector2 point = new Vector2();
+
+    void Start () {
         Get_connect_information(ip_address, port_number);
         receivedata = new Thread(Receive_data);
         receivedata.IsBackground = true;
         receivedata.Start();
         
     }
-    // Update is called once per frame
-    void Update() {
-        if(Input.GetKeyDown(KeyCode.D) && Input.GetKey(KeyCode.LeftControl))
-        {
-            if (showDebugLog) showDebugLog = false;
-            else showDebugLog = true;
-        }
-        if (value < 100) distancevalue.color = new Vector4(0.1f, 0.3f, 0.5f, 1f);
-        else distancevalue.color = new Vector4(0.1f, 0.1f, 0.1f, 1f);
-        distancevalue.text = "DistanceValue: " + value.ToString() + "cm";
+	
+	void Update () {
+        prefab.transform.position = point;
+    }
+
+    public Vector2 dis_to_pos(int distance)
+    {
+        Vector2 center = new Vector2(540, 0);
+        int dis = distance;
+        Vector2 position = new Vector2();
+        position.x = center.x + dis * Mathf.Cos(-45 + 0.25f) / -180 * Mathf.PI;
+        position.y = center.y + dis * Mathf.Sin(-45 + 0.25f) / -180 * Mathf.PI;
+
+        return position;
     }
     private void Get_connect_information(string ip, int port)
     {
@@ -61,7 +61,9 @@ public class getdis_ethernet : MonoBehaviour {
         StartCoroutine(Setup_tcp());
         //Setup_tcp();
     }
-    IEnumerator Setup_tcp() {
+
+    IEnumerator Setup_tcp()
+    {
         try
         {
             if (ipconfig)
@@ -72,12 +74,15 @@ public class getdis_ethernet : MonoBehaviour {
                 tcpconnect = true;
             }
         }
-        catch (System.Exception e){
+        catch (System.Exception e)
+        {
             Debug.Log("<color=red>Error! </color>" + e);
         }
         yield return null;
     }
-    private void Receive_data() {
+
+    private void Receive_data()
+    {
         while (tcpconnect)
         {
             try
@@ -104,23 +109,26 @@ public class getdis_ethernet : MonoBehaviour {
                         continue;
                     }
                     // show distance data
-                    for (int k = 0; k < distances.Count; k++)
+                    for (int k = 0; k < 1080; k++)
                     {
-                        if(showDebugLog) Debug.Log("k: " + k +"  distance: " + distances[k] / 10 + "cm");
-                        value = (int)distances[k] / 10;
-
-                        if ((int)distances[k] < range)
+                        distance_pool = (int)distances[k] / 10;
+                        if(k == 540)
                         {
-                            Debug.Log("<color=teal>Get distance: </color>" + distances[k] / 10 + "cm");
-                            tcpconnect = false;
-                            write(stream, SCIP_Writer.QT());    // stop measurement mode
-                            read_line(stream); // ignore echo back
-                            stream.Close();
-                            urg.Close();
-                            Debug.Log("<color=green>Sensor close.</color>");
-                            break;
-                        }
+                            
+                            point = dis_to_pos(distance_pool);
+                            
+                            //Debug.Log(point);
 
+                        }
+                        
+                        //Debug.Log("<color=yellow>Step: </color>" + k + "<color=teal>Get distance: </color>" + distances[k] / 10 + "cm");
+                        //tcpconnect = false;
+                        //write(stream, SCIP_Writer.QT());    // stop measurement mode
+                        //read_line(stream); // ignore echo back
+                        //stream.Close();
+                        //urg.Close();
+                        //Debug.Log("<color=green>Sensor close.</color>");
+                        //break;
                     }
                 }
             }
@@ -131,8 +139,9 @@ public class getdis_ethernet : MonoBehaviour {
             //Debug.Log("<color=yellow>sleep</color>");
             Thread.Sleep(10);
         }
-        
+
     }
+
     static bool write(NetworkStream stream, string data)
     {
         if (stream.CanWrite)

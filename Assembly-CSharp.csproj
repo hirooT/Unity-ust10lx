@@ -51,9 +51,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\script\draw_test.cs" />
      <Compile Include="Assets\script\getdis_ethernet.cs" />
      <Compile Include="Assets\script\SCIP_library.cs" />
      <Compile Include="Assets\script\ThreadTest.cs" />
+     <Compile Include="Assets\script\ust10lx_visual.cs" />
      <Compile Include="Assets\SerialComm\fix\MessageListenerF.cs" />
      <Compile Include="Assets\SerialComm\Scripts\Samples\SampleCustomDelimiter.cs" />
      <Compile Include="Assets\SerialComm\Scripts\Samples\SampleMessageListener.cs" />
